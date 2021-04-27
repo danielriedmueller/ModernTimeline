@@ -53,14 +53,23 @@ class JsonBuilder {
 		return $jsonEvent;
 	}
 
+	/**
+	* Use DISPLAYTITLE magic word, if defined
+	*/
 	private function newHeadline( \Title $title ): string {
-		return \Html::element(
+        $dbr = wfGetDB( DB_REPLICA );
+        $displayTitle = $dbr->selectField(
+            'page_props',
+            'pp_value',
+            array( 'pp_propname' => 'displaytitle', 'pp_page' => $title->getArticleId() ),
+            __METHOD__
+        );
+
+		return $displayTitle ? $displayTitle : \Html::element(
 			'a',
 			[ 'href' => $title->getFullURL() ],
 			$title->getText()
 		);
-
-//		return DataValueFactory::getInstance()->newDataValueByItem( $subject->getWikiPage() )->getLongHTMLText( smwfGetLinker() );
 	}
 
 	private function timeToJson( SMWDITime $time ): array {
