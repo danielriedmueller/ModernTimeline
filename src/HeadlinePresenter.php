@@ -58,9 +58,12 @@ class HeadlinePresenter {
 
     private function getHeadlinePropertyValue( Subject $subject, $property ) {
         foreach ( $subject->getPropertyValueCollections() as $propertyValues ) {
-            if ($propertyValues->getPrintRequest()->getData()->getInceptiveProperty()->getKey() === $property) {
-                foreach ( $propertyValues->getDataItems() as $dataItem ) {
+            $data = $propertyValues->getPrintRequest()->getData();
+            if ($data) {
+                if ($data->getInceptiveProperty()->getKey() === $property) {
+                    foreach ( $propertyValues->getDataItems() as $dataItem ) {
                         return $this->dataItemToText( $dataItem );
+                    }
                 }
             }
         }
