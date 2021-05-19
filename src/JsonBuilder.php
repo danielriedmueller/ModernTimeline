@@ -4,16 +4,18 @@ declare( strict_types = 1 );
 
 namespace ModernTimeline;
 
-use ModernTimeline\ResultFacade\SubjectCollection;
+use ModernTimeline\ResultFacade\Subject;
 use ModernTimeline\SlidePresenter\SlidePresenter;
 use SMWDITime;
 
 class JsonBuilder {
 
 	private $slidePresenter;
+    private $headlinePresenter;
 
-	public function __construct( SlidePresenter $slidePresenter ) {
+    public function __construct( SlidePresenter $slidePresenter, HeadlinePresenter $headlinePresenter ) {
 		$this->slidePresenter = $slidePresenter;
+		$this->headlinePresenter = $headlinePresenter;
 	}
 
 	/**
@@ -33,7 +35,7 @@ class JsonBuilder {
 	public function buildEvent( Event $event ): array {
 		$jsonEvent = [
 			'text' => [
-				'headline' => $this->newHeadline( $event->getSubject()->getWikiPage()->getTitle() ),
+				'headline' => $this->headlinePresenter->getText( $event->getSubject() ),
 				'text' =>  $this->slidePresenter->getText( $event->getSubject() )
 			],
 			'start_date' => $this->timeToJson( $event->getStartDate() ),
@@ -51,29 +53,6 @@ class JsonBuilder {
 		}
 
 		return $jsonEvent;
-	}
-
-
-    /**
-     * Use DISPLAYTITLE magic word, if defined
-     *
-     * @param \Title $title
-     * @return string
-     */
-	private function newHeadline( \Title $title ): string {
-        $dbr = wfGetDB( DB_REPLICA );
-        $displayTitle = $dbr->selectField(
-            'page_props',
-            'pp_value',
-            array( 'pp_propname' => 'displaytitle', 'pp_page' => $title->getArticleId() ),
-            __METHOD__
-        );
-
-		return $displayTitle ? $displayTitle : \Html::element(
-			'a',
-			[ 'href' => $title->getFullURL() ],
-			$title->getText()
-		);
 	}
 
 	private function timeToJson( SMWDITime $time ): array {

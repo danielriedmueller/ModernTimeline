@@ -22,6 +22,7 @@ class TimelineOptions {
 	private const PARAM_NAV_HEIGHT = 'navigation height';
 	private const PARAM_TEMPLATE = 'template';
 	private const PARAM_IMAGE = 'image property';
+    private const PARAM_HEADLINEPROP = 'headline property';
 
 	public static function getTimelineParameterDefinitions(): array {
 		$definitions = [];
@@ -101,6 +102,11 @@ class TimelineOptions {
 			'aliases' => [ 'imageproperty', 'image' ],
 		];
 
+        $definitions[self::PARAM_HEADLINEPROP] = [
+            'type' => ParameterTypes::STRING,
+            'default' => $GLOBALS['wgModernTimelineHeadlineProperty'],
+        ];
+
 		foreach ( $definitions as $name => $definition ) {
 			$definitions[$name]['message'] = 'modern-timeline-param-' . str_replace( ' ', '-', $name );
 
@@ -129,6 +135,7 @@ class TimelineOptions {
 			'start_at_slide' => self::getStartAtSlide( $parameters ),
 			'start_at_end' => $parameters[self::PARAM_START_AT_END],
 			'duration' => $parameters[self::PARAM_TRANSITION_DURATION],
+            'headline_prop' => $parameters[self::PARAM_HEADLINEPROP],
 		];
 
 		$height = $parameters[self::PARAM_NAV_HEIGHT];

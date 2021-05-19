@@ -46,7 +46,8 @@ class TimelinePresenter implements ResultPresenter {
 
 	private function newJsonBuilder( SimpleQueryResult $result ): JsonBuilder {
 		return new JsonBuilder(
-			$this->getSlidePresenter( $result )
+			$this->getSlidePresenter( $result ),
+            new HeadlinePresenter( $result->getProcessingResult()->getParameterArray() )
 		);
 	}
 
