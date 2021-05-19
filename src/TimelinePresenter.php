@@ -24,7 +24,16 @@ class TimelinePresenter implements ResultPresenter {
 		return 'modern_timeline_' . ++$timelineNumber;
 	}
 
+    /**
+     * Render result only if
+     * @param SimpleQueryResult $result
+     * @return string
+     */
 	public function presentResult( SimpleQueryResult $result ): string {
+	    if (empty($result->getSubjects()->getSubjects())) {
+            return \Html::rawElement('p', [], 'Keine Daten für Zeitstrahl eingetragen.');
+        }
+
 		SMWOutputs::requireResource( 'ext.modern.timeline' );
 
 		SMWOutputs::requireHeadItem(
